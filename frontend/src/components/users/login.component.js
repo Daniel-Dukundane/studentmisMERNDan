@@ -54,9 +54,12 @@ class LogIn extends Component {
       <div>
         <section>
           <div className='imgBX'>
-            <img src='/logbg.jpeg' alt='' />
+            <img src='/logbg.jpg' alt='' />
           </div>
           <div className='contentBX'>
+          <div className='raal'>
+            <img src='/rralg.png' alt='' />
+          </div>
             <div className='formBX'>
               <h2>Log In</h2>
               <form onSubmit={this.onSubmit}>
@@ -66,7 +69,7 @@ class LogIn extends Component {
                 <div className='inputBX'>
                   <label >Email</label>
                   <input
-                    type='text'
+                    type='email'
                     required
                     name='email'
                     value={this.state.email}

@@ -2,8 +2,73 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const Users = require('../models/users.model');
 
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - name
+ *         - email
+ *         - phone
+ *         - nationalID
+ *         - password
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the book
+ *         name:
+ *           type: string
+ *           description: The user name
+ *         email:
+ *           type: string
+ *           description: The user email
+ *         phone:
+ *           type: string
+ *           description: The user phone number
+ *         nationalID:
+ *           type: string
+ *           description: The user national ID
+ *         password:
+ *           type: string
+ *           description: The user password
+ *       example:
+ *         id: d5fE_asz
+ *         name: Daniel
+ *         email: dan@gmail.com
+ *         phone: 078888787
+ *         nationalID: 122002334343
+ *         password: 123456789
+ */
+/**
+  * @swagger
+  * tags:
+  *   name: Users
+  *   description: The users managing API
+  */
+const Users = require('../models/users.model');
+const { authentication } = require('../middlewares/auth.middleware');
+
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Returns the list of all the users
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: The list of the users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
 
 router.route('/').get((req, res) => {
     Users.find()
@@ -12,9 +77,35 @@ router.route('/').get((req, res) => {
     }
 );
 
+
+/**
+ * @swagger
+ * /users/add:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: The user was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       500:
+ *         description: Some server error
+ */
+
 router.route('/add').post((req, res) => {
     const name = req.body.name;
     const email = req.body.email;
+    const phone = req.body.phone;
+    const nationalID = req.body.nationalID;
     const password = req.body.password;
 
     const hashed = bcrypt.hashSync(password, 10);
@@ -22,6 +113,9 @@ router.route('/add').post((req, res) => {
     const newUser = new Users({
         name,
         email,
+        phone,
+        nationalID,
+        
         password:hashed,
     });
 
@@ -32,6 +126,31 @@ router.route('/add').post((req, res) => {
     }
 );
 
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   get:
+ *     summary: Get the user by id
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id
+ *     responses:
+ *       200:
+ *         description: The user description by id
+ *         contens:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: The user was not found
+ */
+
 router.route('/:id').get((req, res) => {
     Users.findById(req.params.id)
         .then((user) => res.json(user))
@@ -40,6 +159,28 @@ router.route('/:id').get((req, res) => {
         );
     }
 );
+
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Remove the user by id
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user id
+ * 
+ *     responses:
+ *       200:
+ *         description: The user was deleted
+ *       404:
+ *         description: The user was not found
+ */
 
 router.route('/:id').delete((req, res) => {
     Users.findByIdAndDelete(req.params.id)
@@ -50,11 +191,46 @@ router.route('/:id').delete((req, res) => {
     }
 );
 
-router.route('/update/:id').post((req, res) => {
+/**
+ * @swagger
+ * /users/update/{id}:
+ *  put:
+ *    summary: Update the user by the id
+ *    tags: [Users]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        schema:
+ *          type: string
+ *        required: true
+ *        description: The user id
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/User'
+ *    responses:
+ *      200:
+ *        description: The user was updated
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/User'
+ *      404:
+ *        description: The user was not found
+ *      500:
+ *        description: Some error happened
+ */
+
+router.route('/update/:id').put((req, res) => {
     Users.findById(req.params.id)
         .then((user) => {
             user.name = req.body.name ? req.body.name : user.name;
             user.email = req.body.email ? req.body.email : user.email;
+            user.phone = req.body.phone ? req.body.phone : user.phone;
+            user.nationalID = req.body.nationalID ? req.body.nationalID : user.nationalID;
+            
             user.password = req.body.password ? req.body.password : user.password;
 
             user

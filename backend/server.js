@@ -39,7 +39,7 @@ const options = {
 };
 const specs = swaggerJsDoc(options);
 const app = express();
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+app.use("/vehiclemis-apis", swaggerUI.serve, swaggerUI.setup(specs));
 const port = process.env.PORT || 3000;
 
 app.use(cors());
@@ -53,11 +53,14 @@ connection.once('open', () => {
 }
 );
 
-const studentRouter = require('./routes/students');
 const usersRoute = require('./routes/users');
+const vehiclesRoute = require('./routes/vehicle');
+const ownersRoute = require('./routes/owner');
 
-app.use('/students', studentRouter);
 app.use("/users", usersRoute);
+app.use("/vehicles", vehiclesRoute);
+app.use("/owners", ownersRoute);
+
  
 
 

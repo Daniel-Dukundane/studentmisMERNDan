@@ -1,24 +1,25 @@
 const { Schema } = require("mongoose");
 const mongoose = require("mongoose");
 
-const studentSchema = new Schema({
+const ownerSchema = new Schema({
     name : {
         type : String,
         required : true
     },
-    email : {
+    nationalID : {
+        type : String,
+        required : true,
+        unique: true
+    },
+    phoneNumber : {
         type : String,
         required : true
     },
-    classname : {
-        type : String,
-        required : true
-    },
-    phone : {
+    address : {
         type : String,
         required : true
     }
 })
-const Student = mongoose.model("Student", studentSchema);
+const Owner = mongoose.model("Owner",  ownerSchema);
 
-module.exports = Student;
+module.exports = Owner;

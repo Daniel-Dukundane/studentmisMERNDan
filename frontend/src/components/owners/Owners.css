@@ -102,19 +102,6 @@ section .contentBX .formBX .inputBX input[type = "submit"]:hover {
     color: white;
 }
 
-section .contentBX .raal img{
-  width: 20%;
-  position: absolute;
-  
-  top: 4%;
-}
-section .contentBX .raal2 img{
-  width: 10%;
-  position: absolute;
-  
-  top: 4%;
-}
-
 section .contentBX .formBX .inputBX p{
     color:#607d8b;
 }

@@ -2,13 +2,13 @@ const jwt = require('jsonwebtoken');
 function authentication(req, res, next) {
     const token = req.headers['authorization'];
 
-    const tokenParts = token.split(' ')[1];
+    // const tokenParts = token.split(' ')[1];
 
     if (!token) {
         return res.status(401).send('Access denied. No token provided.');
     }
 
-    const decoded = jwt.verify(tokenParts, 'DANIEL_KEY_67');
+    const decoded = jwt.verify(token, 'DANIEL_KEY_67');
 
     if (decoded) {
       req.user = decoded;
